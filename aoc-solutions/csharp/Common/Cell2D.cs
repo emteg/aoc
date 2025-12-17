@@ -102,4 +102,54 @@ public class Cell2D
         if (bothWays)
             upLeft.DownRight = this;
     }
+
+    /// <summary>
+    /// Establishes a two-way connection for 4 neighbors when building a grid of cells. The cell must already be
+    /// part of the grid. Uses the cell's X and Y to connect to the cell's left and up neighbor both ways. Cells in the
+    /// middle of the grid will be connected with their 4 neighbors.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// List&lt;List&lt;TCell&gt;&gt; grid = [];
+    /// int width = ... // set to correct value
+    /// int y = 0;
+    /// foreach (string line in input)
+    /// {
+    ///     int x = 0;
+    ///     grid.Add([]);
+    /// 
+    ///     foreach (char c in line)
+    ///     {
+    ///         TCell cell = ... // create a new cell
+    ///         grid[y].Add(seat);
+    ///         Cell2D.ConnectFour(seat, grid, width);
+    ///         x++;
+    ///     }
+    ///     y++;
+    /// }
+    /// </code>
+    /// </example>
+    public static void ConnectFour<TCell>(TCell cell, List<List<TCell>> grid) where TCell : Cell2D
+    {
+        if (cell.X > 0)
+            cell.ConnectLeft(grid[cell.Y][cell.X - 1]);
+        if (cell.Y > 0)
+            cell.ConnectUp(grid[cell.Y - 1][cell.X]);
+    }   
+    
+    /// <summary>
+    /// Establishes a two-way connection for 8 neighbors when building a grid of cells. The cell must already be
+    /// part of the grid. Uses the cell's X and Y to connect to the cell's left, left-up, up, and up-right neighbor
+    /// both ways. Cells in the middle of the grid will be connected with their 8 neighbors.
+    /// </summary>
+    /// <example>See description of ConnectFour and use this method instead</example>
+    public static void ConnectEight<TCell>(TCell cell, List<List<TCell>> grid, int width) where TCell : Cell2D
+    {
+        ConnectFour(cell, grid);
+        
+        if (cell.X > 0 && cell.Y > 0)
+            cell.ConnectUpLeft(grid[cell.Y - 1][cell.X - 1]);
+        if (cell.Y > 0 && cell.X < width - 1)
+            cell.ConnectUpRight(grid[cell.Y - 1][cell.X + 1]);
+    }
 }
