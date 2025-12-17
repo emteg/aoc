@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="2015/2015.csproj" />
+  <Project Path="2020/2020.csproj" />
+  <Project Path="2025/2025.csproj" />
+  <Project Path="Aoc/Aoc.csproj" />
+  <Project Path="Common/Common.csproj" />
+</Solution>

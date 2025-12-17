@@ -1,0 +1,1 @@
+dotnet publish .\Aoc\Aoc.csproj -c Release -o .\

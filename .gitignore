@@ -1,0 +1,6 @@
+aoc-artifacts/*
+**/bin/
+**/obj/
+**/.idea/
+*.dll
+*.exe
