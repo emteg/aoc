@@ -1,4 +1,4 @@
-aoc-artifacts/*
+aoc-artifacts/
 **/bin/
 **/obj/
 **/.idea/
