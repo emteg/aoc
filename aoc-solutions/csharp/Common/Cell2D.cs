@@ -4,6 +4,7 @@ public class Cell2D
 {
     public readonly int X;
     public readonly int Y;
+    public readonly (int x, int y) Location;
     public Cell2D? Up { get; private set; }
     public Cell2D? UpRight { get; private set; }
     public Cell2D? Right { get; private set; }
@@ -45,6 +46,7 @@ public class Cell2D
     {
         X = x;
         Y = y;
+        Location = (x, y);
     }
 
     public void ConnectUp(Cell2D up, bool bothWays = true)
@@ -151,5 +153,34 @@ public class Cell2D
             cell.ConnectUpLeft(grid[cell.Y - 1][cell.X - 1]);
         if (cell.Y > 0 && cell.X < width - 1)
             cell.ConnectUpRight(grid[cell.Y - 1][cell.X + 1]);
+    }
+    
+    /// <summary>
+    /// Enumerates the coordinates of all (4 or 8) hypothetical neighbors. Assumes a screen-coordinate
+    /// system where X goes to the right, and Y goes to the bottom. The Y-Direction can be inverted.
+    /// Order of neighbors: right, up-right, up, up-left, left, down-left, down, down-right
+    /// </summary>
+    public IEnumerable<(int x, int y)> NeighborCoordinates(bool eightNeighbors = false, bool invertY = false)
+    {
+        int invert = invertY ? -1 : 1;
+        yield return (X + 1, Y);
+        
+        if (eightNeighbors)
+            yield return (X + 1, Y - 1 * invert);
+        
+        yield return (X, Y - 1 * invert);
+        
+        if (eightNeighbors)
+            yield return (X - 1, Y - 1 * invert);
+        
+        yield return (X - 1, Y);
+        
+        if (eightNeighbors)
+            yield return (X - 1, Y + 1 * invert);
+        
+        yield return (X, Y + 1 * invert);
+        
+        if (eightNeighbors)
+            yield return (X + 1, Y + 1 * invert);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace _2017;
+﻿using Common;
+
+namespace _2017;
 
 public static class Day03
 {
@@ -12,7 +14,6 @@ public static class Day03
      * 72  43  44  45  46  47  48  49  50
      * 73  74  75  76  77  78  79  80  81
      */
-    
     
     public static string Part1(IEnumerable<string> input)
     {
@@ -98,11 +99,131 @@ public static class Day03
     }
 
     public static string Part1Sample() => Part1(["1024"]);
-    
+
     public static string Part2(IEnumerable<string> input)
     {
-        return string.Empty;
+        Dictionary<(int x, int y), SpiralCell> cells = [];
+        SpiralCell last = new((0, 0)) { Value = 1 };
+        cells.Add(last.Location, last);
+        
+        int maxCoordinate = 0;
+        bool newLayer = true;
+        long desiredValue = long.Parse(input.First());
+        Direction direction = Direction.Right;
+        int x = 0;
+        int y = 0;
+
+        while (last.Value <= desiredValue)
+        {
+            if (direction is Direction.Right && newLayer)
+            {
+                maxCoordinate++;
+                newLayer = false;
+                x++;
+                direction = Direction.Up;
+            }
+            else if (direction is Direction.Up)
+            {
+                y++;
+                if (Math.Abs(y) >= maxCoordinate) 
+                    direction = Direction.Left;
+            }
+            else if (direction is Direction.Left)
+            {
+                x--;
+                if (Math.Abs(x) >= maxCoordinate) 
+                    direction = Direction.Down;
+            }
+            else if (direction is Direction.Down)
+            {
+                y--;
+                if (Math.Abs(y) >= maxCoordinate) 
+                    direction = Direction.Right;
+            }
+            else // right
+            {
+                x++;
+                if (Math.Abs(x) >= maxCoordinate) 
+                    newLayer = true;
+            }
+            SpiralCell newCell = new(x, y);
+            newCell.ConnectAuto(cells);
+            cells.Add(newCell.Location, newCell);
+            newCell.Value = newCell.Neighbors.Cast<SpiralCell>().Select(cell => cell.Value).Sum();
+            
+            last = newCell;
+        }
+        
+        return last.Value.ToString();
     }
-    
-    public static string Part2Sample() => string.Empty;
+
+    public static string Part2Sample() => Part2(["54"]);
+
+    private sealed class SpiralCell : Cell2D
+    {
+        public long Value { get; set; }
+        
+        public int ManhattanDistanceFromCenter => Math.Abs(X) + Math.Abs(Y);
+        
+        public SpiralCell(int x, int y) : base(x, y) { }
+
+        public SpiralCell((int x, int y) location) : base(location.x, location.y) { }
+
+        public void ConnectAuto(SpiralCell other)
+        {
+            if (other.X > X && other.Y == Y) // x > x -> right
+            {
+                ConnectRight(other);
+                return;
+            }
+            if (other.X > X && other.Y > Y) // x > x -> right, y > y -> up
+            {
+                ConnectUpRight(other);
+                return;
+            }
+            if (other.X == X && other.Y > Y) // y > y -> up
+            {
+                ConnectUp(other);
+                return;
+            }
+            if (other.X < X && other.Y > Y) // x < x -> left, y > y -> up
+            {
+                ConnectUpLeft(other);
+                return;
+            }
+            if (other.X < X && other.Y == Y) // x < x -> left
+            {
+                ConnectLeft(other);
+                return;
+            }
+            if (other.X < X && other.Y < Y) // x < x -> left, y < y -> down
+            {
+                ConnectDownLeft(other);
+                return;
+            }
+            if (other.X == X && other.Y < Y) // y < y -> down
+            {
+                ConnectDown(other);
+                return;
+            }
+            if (other.X > X && other.Y < Y) // x > x -> right, y < y -> down
+            {
+                ConnectDownRight(other);
+                return;
+            }
+        }
+
+        public void ConnectAuto(Dictionary<(int x, int y), SpiralCell> cells)
+        {
+            foreach ((int x, int y) location in NeighborCoordinates(true, true))
+            {
+                if (!cells.TryGetValue(location, out SpiralCell? other))
+                    continue;
+                
+                ConnectAuto(other);
+            }
+        }
+
+        public override string ToString() => $"({X},{Y}) - {Value}";
+    }
 }
