@@ -113,7 +113,6 @@ public class Cell2D
     /// <example>
     /// <code>
     /// List&lt;List&lt;TCell&gt;&gt; grid = [];
-    /// int width = ... // set to correct value
     /// int y = 0;
     /// foreach (string line in input)
     /// {
@@ -123,8 +122,8 @@ public class Cell2D
     ///     foreach (char c in line)
     ///     {
     ///         TCell cell = ... // create a new cell
-    ///         grid[y].Add(seat);
-    ///         Cell2D.ConnectFour(seat, grid, width);
+    ///         grid[y].Add(cell);
+    ///         Cell2D.ConnectFour(cell, grid);
     ///         x++;
     ///     }
     ///     y++;

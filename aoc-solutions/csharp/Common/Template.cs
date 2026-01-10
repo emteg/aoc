@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace _2020;
+﻿namespace Common;
 
 public static class Template
 {
