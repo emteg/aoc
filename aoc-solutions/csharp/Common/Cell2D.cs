@@ -182,4 +182,6 @@ public class Cell2D
         if (eightNeighbors)
             yield return (X + 1, Y + 1 * invert);
     }
+
+    public (int deltaX, int deltaY) DistanceTo(Cell2D other) => (other.X - X, other.Y - Y);
 }
